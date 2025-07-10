@@ -24,3 +24,6 @@ RUN chmod -R 775 storage bootstrap/cache
 
 # Permissions
 RUN chown -R www-data:www-data /var/www
+
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8080"]
+EXPOSE 8080
