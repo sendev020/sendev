@@ -1,22 +1,21 @@
-FROM php:8.2-fpm
+FROM php:8.2-cli
 
+# Install dependencies
 RUN apt-get update && apt-get install -y \
-    git curl unzip zip libzip-dev libxml2-dev \
-    libpng-dev libjpeg-dev libonig-dev libpq-dev \
-    libxslt1-dev libicu-dev \
-    && docker-php-ext-install pdo pdo_mysql mbstring bcmath zip xml \
-    && rm -rf /var/lib/apt/lists/*
+    git unzip libzip-dev libpng-dev libonig-dev libxml2-dev curl \
+    && docker-php-ext-install pdo pdo_mysql zip mbstring exif pcntl
 
+# Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
+# Set working directory
 WORKDIR /var/www
 
+# Copy project files
 COPY . .
 
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader || (cat /root/.composer/composer.log && false)
-RUN php artisan key:generate || (cat storage/logs/laravel.log && false)
+# Install PHP dependencies
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
-
-EXPOSE 80
-
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=80"]
+# Permissions
+RUN chown -R www-data:www-data /var/www
