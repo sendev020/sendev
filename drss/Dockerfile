@@ -1,39 +1,35 @@
-# Étape 1 : Image PHP avec extensions nécessaires
+# Étape 1 : Utiliser PHP 8.2 avec FPM
 FROM php:8.2-fpm
 
-# Installer les dépendances système
+# Installer les dépendances système et extensions PHP nécessaires
 RUN apt-get update && apt-get install -y \
-    build-essential \
-    libpng-dev \
-    libjpeg-dev \
-    libonig-dev \
-    libxml2-dev \
-    libzip-dev \
-    zip \
-    unzip \
-    git \
-    curl \
-    && docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath zip
+    git curl unzip zip libzip-dev libxml2-dev \
+    libpng-dev libjpeg-dev libonig-dev libpq-dev \
+    libxslt1-dev libmcrypt-dev libicu-dev \
+    && docker-php-ext-install pdo pdo_mysql mbstring bcmath zip xml
 
-# Installer Composer (depuis image officielle)
+# Installer Composer (depuis l’image officielle)
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 # Définir le dossier de travail
 WORKDIR /var/www
 
-# Copier tous les fichiers du projet dans le conteneur
+# Copier les fichiers de l'application
 COPY . .
 
-# Installer les dépendances PHP de Laravel
+# Installer les dépendances Laravel
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
-# Donner les bonnes permissions à Laravel
-RUN mkdir -p /var/www/storage /var/www/bootstrap/cache \
-    && chown -R www-data:www-data /var/www \
-    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+# Créer le fichier sqlite si nécessaire
+RUN mkdir -p database && touch database/database.sqlite
 
-# Exposer le port 9000 pour PHP-FPM (optionnel si usage avec Nginx séparé)
+# Donner les bonnes permissions
+RUN mkdir -p storage bootstrap/cache \
+    && chown -R www-data:www-data /var/www \
+    && chmod -R 775 storage bootstrap/cache
+
+# Exposer le port 9000 (PHP-FPM)
 EXPOSE 9000
 
-# Commande de lancement
+# Lancer PHP-FPM
 CMD ["php-fpm"]
