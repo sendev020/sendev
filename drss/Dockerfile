@@ -18,10 +18,13 @@ WORKDIR /var/www
 # Copier tous les fichiers Laravel
 COPY . .
 
+RUN cp .env.example .env
 # Installer les dépendances Laravel
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
 # Générer la clé de l'application
+
+
 RUN php artisan key:generate
 
 # Créer les dossiers nécessaires
