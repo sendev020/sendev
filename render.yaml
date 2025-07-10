@@ -4,12 +4,22 @@ services:
     env: docker
     plan: free
     dockerContext: .
-    dockerfilePath: Dockerfile
+    dockerfilePath: ./Dockerfile  # ✅ Corrigé : met "./Dockerfile" si le Dockerfile est à la racine du projet
     autoDeploy: true
+
     envVars:
       - key: APP_ENV
         value: production
+
       - key: APP_KEY
-        generateValue: true
+        generateValue: true  # Génère automatiquement une clé Laravel (peut ne pas suffire sans artisan key:generate)
+
       - key: DB_CONNECTION
-        value: sqlite
+        value: sqlite  # OK, si tu utilises SQLite
+
+      # 🔧 Tu peux aussi ajouter d'autres variables souvent nécessaires :
+      - key: APP_DEBUG
+        value: 'false'
+
+      - key: LOG_CHANNEL
+        value: stderr

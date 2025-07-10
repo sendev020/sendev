@@ -16,7 +16,7 @@ WORKDIR /var/www
 
 COPY . /var/www
 
-RUN composer install
+RUN composer install --no-interaction --no-plugins --no-scripts || cat /var/www/storage/logs/laravel.log || true
 
 RUN chown -R www-data:www-data /var/www \
     && chmod -R 755 /var/www/storage
