@@ -18,7 +18,11 @@ WORKDIR /var/www
 COPY . .
 
 # Installer les dépendances Laravel
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader || true
+RUN cat /var/www/storage/logs/laravel.log || echo "Pas de log Laravel"
+RUN ls -la /var/www/vendor || echo "Le dossier vendor est vide"
+
+
 
 # Créer le fichier sqlite si nécessaire
 RUN mkdir -p database && touch database/database.sqlite
