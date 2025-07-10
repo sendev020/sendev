@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: drss-laravel-app
+    env: docker
+    plan: free
+    dockerContext: .
+    dockerfilePath: Dockerfile
+    autoDeploy: true
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_KEY
+        generateValue: true
+      - key: DB_CONNECTION
+        value: sqlite
