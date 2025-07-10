@@ -16,6 +16,11 @@ COPY . .
 
 # Install PHP dependencies
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+RUN php artisan key:generate
+RUN mkdir -p storage/logs database
+RUN touch database/database.sqlite
+RUN chown -R www-data:www-data /var/www
+RUN chmod -R 775 storage bootstrap/cache
 
 # Permissions
 RUN chown -R www-data:www-data /var/www
