@@ -33,7 +33,8 @@ RUN mkdir -p storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
 # Exposer le port 9000 (PHP-FPM)
-EXPOSE 9000
+EXPOSE 80
 
 # Lancer PHP-FPM
-CMD ["php-fpm"]
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=80"]
+
