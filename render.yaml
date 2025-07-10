@@ -3,8 +3,8 @@ services:
     name: drss-laravel-app
     env: docker
     plan: free
-    dockerContext: .
-    dockerfilePath: ./Dockerfile  # ✅ Corrigé : met "./Dockerfile" si le Dockerfile est à la racine du projet
+    dockerContext: ./drss
+    dockerfilePath: ./drss:Dockerfile  # ✅ Corrigé : met "./Dockerfile" si le Dockerfile est à la racine du projet
     autoDeploy: true
 
     envVars:
