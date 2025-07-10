@@ -12,13 +12,11 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www
 
 COPY . .
+RUN composer config -g github-oauth.github.com <your_token_if_needed>
 
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader \
-    && php artisan key:generate \
-    && mkdir -p storage/logs database \
-    && touch database/database.sqlite \
-    && chown -R www-data:www-data /var/www \
-    && chmod -R 775 storage bootstrap/cache
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader || (cat /root/.composer/composer.log && false)
+RUN php artisan key:generate || (cat storage/logs/laravel.log && false)
+
 
 EXPOSE 80
 
