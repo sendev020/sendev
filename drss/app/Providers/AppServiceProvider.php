@@ -7,6 +7,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Route;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,6 +25,9 @@ public function register(): void
 public function boot(): void
 {
 
+if (env('APP_ENV') === 'production') {
+        URL::forceScheme('https');
+    }
 
     Route::model('role', Role::class);
 
@@ -32,5 +36,10 @@ public function boot(): void
     ResetPassword::createUrlUsing(function (object $notifiable, string $token) {
         return config('app.frontend_url')."/password-reset/$token?email={$notifiable->getEmailForPasswordReset()}";
     });
+
+
+
 }
+
 }
+
