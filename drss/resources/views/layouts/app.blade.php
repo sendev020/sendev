@@ -8,48 +8,43 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
-        <!-- Logo ou nom de l'app -->
         <a class="navbar-brand" href="{{ route('dashboard') }}">
             <img src="{{ asset('logo.png') }}" alt="Logo DRSS" style="height: 40px;">
         </a>
 
-        <!-- Bouton responsive -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
                 aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <!-- Contenu de la barre de navigation -->
         <div class="collapse navbar-collapse" id="navbarContent">
-            <!-- Liens de gauche -->
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
                 </li>
 
-                @hasanyrole('admin | Secretaire')
+                @hasanyrole('admin|Secretaire')
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('courriers.index') }}">Courriers</a>
                 </li>
                 @endhasanyrole
 
-                @hasanyrole('admin | user')
+                @hasanyrole('admin|user')
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('rapports.index') }}">Rapports</a>
                 </li>
-                @hasanyrole
+                @endhasanyrole
 
-                @hasanyrole('admin | Directeur')
+                @hasanyrole('admin|Directeur')
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('personnels.index') }}">Personnel</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('suivis.index') }}">Suivi du personnel</a>
                 </li>
-                @hasanyendrole
+                @endhasanyrole
             </ul>
 
-            <!-- Partie droite : utilisateur -->
             <ul class="navbar-nav ms-auto">
                 @auth
                     <li class="nav-item">
@@ -81,12 +76,10 @@
     </div>
 </nav>
 
-<!-- Contenu principal -->
 <div class="container mt-4">
     @yield('content')
 </div>
 
-<!-- Pied de page -->
 <footer class="bg-light text-center py-3 mt-4">
     <small>DRSS © {{ date('M-Y') }}</small>
 </footer>
