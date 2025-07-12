@@ -103,8 +103,8 @@ class SuiviPersonnelController extends Controller
             'personnel_id' => 'required|exists:personnels,id',
             'type' => 'required|in:congé,absence,retard,permission,maladie',
             'date_debut' => 'required|date',
-            'date_fin' => 'nullable|date|after_or_equal:date_debut',
-            'motif' => 'nullable|string',
+            'date_fin' => 'required|date|after_or_equal:date_debut',
+            'motif' => 'required|string',
         ]);
 
         $suivi->update($request->all());

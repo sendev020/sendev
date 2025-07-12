@@ -3,32 +3,45 @@
 @section('content')
 <div class="container">
     <h1>Modifier le suivi</h1>
-    <form action="{{ route('suivis.update', $suivi->id) }}" method="POST">
+
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form action="{{ route('suivis.update', $suivi->personnel_id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
         <div class="mb-3">
             <label for="type" class="form-label">Type</label>
-            <select name="type" class="form-control" required>
+            <select id="type" name="type" class="form-control" required>
                 @foreach(['congé', 'absence', 'retard', 'permission', 'maladie'] as $option)
-                    <option value="{{ $option }}" {{ $suivi->type == $option ? 'selected' : '' }}>{{ ucfirst($option) }}</option>
+                    <option value="{{ $option }}" {{ $suivi->type == $option ? 'selected' : '' }}>
+                        {{ ucfirst($option) }}
+                    </option>
                 @endforeach
             </select>
         </div>
 
         <div class="mb-3">
             <label for="date_debut" class="form-label">Date début</label>
-            <input type="date" name="date_debut" class="form-control" value="{{ $suivi->date_debut }}" required>
+            <input id="date_debut" type="date" name="date_debut" class="form-control" value="{{ $suivi->date_debut }}" required>
         </div>
 
         <div class="mb-3">
             <label for="date_fin" class="form-label">Date fin</label>
-            <input type="date" name="date_fin" class="form-control" value="{{ $suivi->date_fin }}">
+            <input id="date_fin" type="date" name="date_fin" class="form-control" value="{{ $suivi->date_fin }}">
         </div>
 
         <div class="mb-3">
             <label for="motif" class="form-label">Motif</label>
-            <textarea name="motif" class="form-control" rows="3">{{ $suivi->motif }}</textarea>
+            <textarea id="motif" name="motif" class="form-control" rows="3">{{ $suivi->motif }}</textarea>
         </div>
 
         <button type="submit" class="btn btn-primary">Mettre à jour</button>
