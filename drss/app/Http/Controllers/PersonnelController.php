@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\ResumeSuiviExport;
 use App\Exports\PersonnelsExport;
 
 class PersonnelController extends Controller
@@ -28,19 +27,22 @@ class PersonnelController extends Controller
         $request->validate([
             'nom' => 'required|string|max:255',
             'prenom' => 'required|string|max:255',
-            'email' => 'nullable|email',
-            'telephone' => 'nullable|string|max:20',
-            'poste' => 'nullable|string|max:255',
-            'service' => 'nullable|string|max:255',
-            'anniversaire' => 'nullable|date|max:20',
-            'adresse' => 'nullable|string|max:255',
+            'email' => 'required|email',
+            'telephone' => 'required|string|max:20',
+            'poste' => 'required|string|max:255',
+            'service' => 'required|string|max:255',
+            'anniversaire' => 'required|date',
+            'adresse' => 'required|string|max:255',
             'photo' => 'nullable|image|max:2048',
         ]);
 
-        $data = $request->only(['nom', 'prenom', 'email', 'telephone', 'poste', 'service','anniversaire','adresse']);
+        $data = $request->only([
+            'nom', 'prenom', 'email', 'telephone',
+            'poste', 'service', 'anniversaire', 'adresse'
+        ]);
 
         if ($request->hasFile('photo')) {
-            $data['photo'] = $request->file('photo')->store('photos', 'public');
+            $data['photo'] = $request->file('photo')->store('photos', 'public'); // stocké dans storage/app/public/photos
         }
 
         Personnel::create($data);
@@ -67,19 +69,23 @@ class PersonnelController extends Controller
             'telephone' => 'nullable|string|max:20',
             'poste' => 'nullable|string|max:255',
             'service' => 'nullable|string|max:255',
-            'anniversaire' => 'nullable|date|max:20',
+            'anniversaire' => 'nullable|date',
             'adresse' => 'nullable|string|max:255',
             'photo' => 'nullable|image|max:2048',
         ]);
 
-        $data = $request->only(['nom', 'prenom', 'email', 'telephone', 'poste', 'service','anniversaire','adresse']);
+        $data = $request->only([
+            'nom', 'prenom', 'email', 'telephone',
+            'poste', 'service', 'anniversaire', 'adresse'
+        ]);
 
         if ($request->hasFile('photo')) {
-            // Supprimer l'ancienne photo si elle existe
+            // Supprimer l'ancienne photo
             if ($personnel->photo && Storage::disk('public')->exists($personnel->photo)) {
                 Storage::disk('public')->delete($personnel->photo);
             }
 
+            // Enregistrer la nouvelle
             $data['photo'] = $request->file('photo')->store('photos', 'public');
         }
 
@@ -90,6 +96,7 @@ class PersonnelController extends Controller
 
     public function destroy(Personnel $personnel)
     {
+        // Supprimer la photo si elle existe
         if ($personnel->photo && Storage::disk('public')->exists($personnel->photo)) {
             Storage::disk('public')->delete($personnel->photo);
         }
@@ -99,21 +106,15 @@ class PersonnelController extends Controller
         return redirect()->route('personnels.index')->with('success', 'Personnel supprimé avec succès.');
     }
 
+    public function exportPdf()
+    {
+        $personnels = Personnel::all();
+        $pdf = Pdf::loadView('personnels.pdf', compact('personnels'));
+        return $pdf->download('liste_personnel.pdf');
+    }
 
-
-
-public function exportPdf()
-{
-    $personnels = \App\Models\Personnel::all();
-    $pdf = Pdf::loadView('personnels.pdf', compact('personnels'));
-    return $pdf->download('liste_personnel.pdf');
-}
-
-public function exportExcel()
-{
-    return Excel::download(new PersonnelsExport, 'liste_personnel.xlsx');
-}
-
-
-
+    public function exportExcel()
+    {
+        return Excel::download(new PersonnelsExport, 'liste_personnel.xlsx');
+    }
 }

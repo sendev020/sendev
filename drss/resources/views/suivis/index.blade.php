@@ -34,7 +34,7 @@
         <tbody>
             @foreach($suivis as $suivi)
                 <tr>
-                    <td>{{ $suivi->personnel->nom }}</td>
+                    <td>{{ $suivi->personnel->prenom }} {{ $suivi->personnel->nom }}</td>
                     <td>{{ ucfirst($suivi->type) }}</td>
                     <td>{{ $suivi->date_debut }}</td>
                     <td>{{ $suivi->date_fin ?? '-' }}</td>
@@ -70,7 +70,7 @@
     <tbody>
         @foreach($personnels as $personnel)
             <tr>
-                <td>{{ $personnel->nom }}</td>
+                <td>{{ $personnel->prenom }} {{ $personnel->nom }}</td>
                 @foreach(\App\Models\SuiviPersonnel::limitesParType() as $type => $limite)
                     @php
                         $total = \App\Models\SuiviPersonnel::totalParTypeEtPersonnel($personnel->id, $type);
