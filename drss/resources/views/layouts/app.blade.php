@@ -27,19 +27,26 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
                 </li>
+                @role('secretaire')
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('courriers.index') }}">Courriers</a>
                 </li>
+                @endrole
+                @role('user')
                 <li>
                     <a class="nav-link" href="{{ route('rapports.index') }}">Rapports</a>
                 </li>
+                @endrole
+                @role('directeur')
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('personnels.index') }}">Personnel</a>
                 </li>
+                @endrole
+                @role('directeur')
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('suivis.index') }}">Suivi du personnel</a>
                 </li>
-
+                @endrole
             </ul>
             <!-- Partie droite : utilisateur -->
             <ul class="navbar-nav ms-auto">
