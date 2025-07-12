@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     <h1>Modifier le suivi</h1>
-    <form action="{{ route('suivis.update', $suivi) }}" method="POST">
+    <form action="{{ route('suivis.update', $suivi->id) }}" method="POST">
         @csrf
         @method('PUT')
 
