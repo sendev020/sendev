@@ -31,35 +31,43 @@
                 </tr>
             </thead>
             <tbody>
-            @foreach($rapports as $rapport)
-                <tr>
-                    <td>{{ $rapport->titre }}</td>
-                    <td>
-                        <a href="{{ asset('storage/' . $rapport->fichier) }}" target="_blank">Voir</a>
-                    </td>
-                    <td>
-                        @if(!$rapport->archived)
-                            <form action="{{ route('rapports.archiver', $rapport) }}" method="POST" class="d-inline">
-                                @csrf
-                                @method('PATCH')
-                                <button class="btn btn-sm btn-warning" onclick="return confirm('Archiver ce rapport ?')">Archiver</button>
-                            </form>
-                        @else
-                            <form action="{{ route('rapports.restaurer', $rapport) }}" method="POST" class="d-inline">
-                                @csrf
-                                @method('PATCH')
-                                <button class="btn btn-sm btn-primary" onclick="return confirm('Restaurer ce rapport ?')">Restaurer</button>
-                            </form>
-                        @endif
-                        <form action="{{ route('rapports.destroy', $rapport) }}" method="POST" onsubmit="return confirm('Voulez-vous vraiment supprimer ce rapport ?');" class="d-inline">
-    @csrf
-    @method('DELETE')
-    <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
-</form>
+                @foreach($rapports as $rapport)
+                    <tr>
+                        <td>{{ $rapport->titre }}</td>
+                        <td>
+                            @if($rapport->fichier)
+                                <a href="{{ asset('storage/' . $rapport->fichier) }}" target="_blank">Voir</a>
+                            @else
+                                <em>Pas de fichier</em>
+                            @endif
+                        </td>
+                        <td>
+                            <a href="{{ route('rapports.download', $rapport->id) }}" class="btn btn-sm btn-primary me-1">
+                                Télécharger
+                            </a>
 
-                    </td>
-                </tr>
-            @endforeach
+                            @if(!$rapport->archived)
+                                <form action="{{ route('rapports.archiver', $rapport) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button class="btn btn-sm btn-warning" onclick="return confirm('Archiver ce rapport ?')">Archiver</button>
+                                </form>
+                            @else
+                                <form action="{{ route('rapports.restaurer', $rapport) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button class="btn btn-sm btn-primary" onclick="return confirm('Restaurer ce rapport ?')">Restaurer</button>
+                                </form>
+                            @endif
+
+                            <form action="{{ route('rapports.destroy', $rapport) }}" method="POST" onsubmit="return confirm('Voulez-vous vraiment supprimer ce rapport ?');" class="d-inline ms-1">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
+                            </form>
+                        </td>
+                    </tr>
+                @endforeach
             </tbody>
         </table>
     @else

@@ -114,6 +114,8 @@ Route::get('personnels/export/excel', [App\Http\Controllers\PersonnelController:
 
 Route::get('suivis/export/cumuls-pdf', [SuiviPersonnelController::class, 'exportCumulsPDF'])->name('suivis.export.cumuls');
 
+Route::get('/rapports/{rapport}/download', [RapportController::class, 'download'])->name('rapports.download');
+
 /*
 |--------------------------------------------------------------------------
 | Authentification
