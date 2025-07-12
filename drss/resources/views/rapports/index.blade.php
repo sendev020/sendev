@@ -42,7 +42,7 @@
                             @endif
                         </td>
                         <td>
-                            <a href="{{ route('rapports.download', $rapport->id) }}" class="btn btn-sm btn-primary me-1">
+                            <a href="{{ route('rapports.download', $rapport) }}" class="btn btn-sm btn-primary me-1">
                                 Télécharger
                             </a>
 
