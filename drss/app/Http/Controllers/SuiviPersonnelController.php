@@ -100,7 +100,6 @@ class SuiviPersonnelController extends Controller
     public function update(Request $request, SuiviPersonnel $suivi)
     {
         $request->validate([
-            'personnel_id' => 'required|exists:personnels,id',
             'type' => 'required|in:congé,absence,retard,permission,maladie',
             'date_debut' => 'required|date',
             'date_fin' => 'required|date|after_or_equal:date_debut',
