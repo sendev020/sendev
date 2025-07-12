@@ -33,30 +33,39 @@ class RapportController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'titre' => 'required|string|max:255',
-            'fichier' => 'required|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx',
-        ]);
+{
+    $request->validate([
+        'titre' => 'required|string|max:255',
+        'fichier' => 'required|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx|max:10240', // max 10Mo
+    ]);
 
-        $rapport = new Rapport();
-        $rapport->titre = $request->titre;
+    $rapport = new Rapport();
+    $rapport->titre = $request->titre;
 
-        if ($request->hasFile('fichier')) {
-            // Stocker dans storage/app/public/rapports
-            $path = $request->file('fichier')->store('rapports', 'public');
-            $rapport->fichier = $path;
+    if ($request->hasFile('fichier')) {
+        // Stocker le fichier dans storage/app/public/rapports
+        $path = $request->file('fichier')->store('rapports', 'public');
+
+        if (!$path) {
+            return back()->withErrors(['fichier' => 'Erreur lors du téléchargement du fichier.'])->withInput();
         }
 
-        $rapport->archived = false;
-        $rapport->save();
-
-        return redirect()->route('rapports.index')->with('success', 'Rapport ajouté avec succès.');
+        // Enregistrer le chemin relatif dans la colonne 'fichier'
+        $rapport->fichier = $path;
+    } else {
+        // En théorie, la validation empêche d'arriver ici, mais on double la sécurité
+        return back()->withErrors(['fichier' => 'Veuillez sélectionner un fichier à télécharger.'])->withInput();
     }
+
+    $rapport->archived = false;
+    $rapport->save();
+
+    return redirect()->route('rapports.index')->with('success', 'Rapport ajouté avec succès.');
+}
 
     public function download(Rapport $rapport)
 {
-    if (!Storage::disk('public')->exists($rapport->fichier)) {
+    if (!$rapport->fichier || !Storage::disk('public')->exists($rapport->fichier)) {
         abort(404, 'Fichier non trouvé');
     }
 
@@ -67,6 +76,7 @@ class RapportController extends Controller
 
     return response()->download($path, $nomFichier);
 }
+
 
     public function archived(Rapport $rapport)
     {
