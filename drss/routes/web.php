@@ -67,6 +67,7 @@ Route::middleware('auth')->group(function () {
     Route::get('rapports/{rapport}/download', [RapportController::class, 'download'])->name('rapports.download');
 });
 
+
 /*
 |--------------------------------------------------------------------------
 | Utilisateurs (simple)

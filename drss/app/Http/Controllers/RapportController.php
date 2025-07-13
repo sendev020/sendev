@@ -11,10 +11,8 @@ class RapportController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('role:admin')->only(['archiver', 'restaurer', 'destroy']);
     }
 
-    // Liste des rapports avec filtre
     public function index(Request $request)
     {
         $filtre = $request->query('filtre', 'actifs');
@@ -23,18 +21,16 @@ class RapportController extends Controller
             $query->where('archived', true);
         }, function ($query) {
             $query->where('archived', false);
-        })->latest()->get();
+        })->get();
 
         return view('rapports.index', compact('rapports', 'filtre'));
     }
 
-    // Formulaire de création
     public function create()
     {
         return view('rapports.create');
     }
 
-    // Enregistrement d'un nouveau rapport
     public function store(Request $request)
     {
         $request->validate([
@@ -46,15 +42,7 @@ class RapportController extends Controller
         $rapport->titre = $request->titre;
 
         if ($request->hasFile('fichier')) {
-            $path = $request->file('fichier')->store('rapports', 'public');
-
-            if (!$path) {
-                return back()->withErrors(['fichier' => 'Erreur lors de l’enregistrement du fichier.'])->withInput();
-            }
-
-            $rapport->fichier = $path;
-        } else {
-            return back()->withErrors(['fichier' => 'Aucun fichier détecté.'])->withInput();
+            $rapport->fichier = $request->file('fichier')->store('rapports', 'public');
         }
 
         $rapport->archived = false;
@@ -63,42 +51,30 @@ class RapportController extends Controller
         return redirect()->route('rapports.index')->with('success', 'Rapport ajouté avec succès.');
     }
 
-    // Téléchargement d’un fichier
-     public function download(Rapport $rapport)
-{
-    dd($rapport);
-    if (!$rapport->fichier || !Storage::disk('public')->exists($rapport->fichier)) {
-        abort(404, 'Fichier non trouvé');
+    public function download(Rapport $rapport)
+    {
+        if (!$rapport->fichier || !Storage::disk('public')->exists($rapport->fichier)) {
+            abort(404, 'Fichier non trouvé');
+        }
+
+        $nomFichier = basename($rapport->fichier);
+        $chemin = Storage::disk('public')->path($rapport->fichier);
+
+        return response()->download($chemin, $nomFichier);
     }
 
-    $extension = pathinfo($rapport->fichier, PATHINFO_EXTENSION);
-    $nomFichier = $rapport->titre . '.' . $extension;
-
-    $path = Storage::disk('public')->path($rapport->fichier);
-
-    return response()->download($path, $nomFichier);
-}
-
-
-    // Archiver un rapport
     public function archiver(Rapport $rapport)
     {
-        $rapport->archived = true;
-        $rapport->save();
-
-        return redirect()->route('rapports.index')->with('success', 'Rapport archivé.');
+        $rapport->update(['archived' => true]);
+        return back()->with('success', 'Rapport archivé.');
     }
 
-    // Restaurer un rapport archivé
     public function restaurer(Rapport $rapport)
     {
-        $rapport->archived = false;
-        $rapport->save();
-
-        return redirect()->route('rapports.index')->with('success', 'Rapport restauré.');
+        $rapport->update(['archived' => false]);
+        return back()->with('success', 'Rapport restauré.');
     }
 
-    // Supprimer un rapport
     public function destroy(Rapport $rapport)
     {
         if ($rapport->fichier && Storage::disk('public')->exists($rapport->fichier)) {
@@ -107,6 +83,6 @@ class RapportController extends Controller
 
         $rapport->delete();
 
-        return redirect()->route('rapports.index')->with('success', 'Rapport supprimé avec succès.');
+        return back()->with('success', 'Rapport supprimé.');
     }
 }
