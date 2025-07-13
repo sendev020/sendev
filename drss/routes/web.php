@@ -101,6 +101,8 @@ Route::middleware('auth')->group(function () {
     Route::get('suivis/export/cumuls-pdf', [SuiviPersonnelController::class, 'exportCumulsPDF'])->name('suivis.export.cumuls');
 });
 
+Route::get('rapports/{rapport}/view', [RapportController::class, 'viewFile'])->name('rapports.view');
+
 /*
 |--------------------------------------------------------------------------
 | Authentification Laravel Breeze

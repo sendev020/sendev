@@ -117,4 +117,20 @@ public function destroy(Rapport $rapport)
 
     return redirect()->route('rapports.index')->with('success', 'Rapport supprimé avec succès.');
 }
+
+public function viewFile(Rapport $rapport)
+{
+    if (!$rapport->fichier || !Storage::disk('public')->exists($rapport->fichier)) {
+        abort(404, 'Fichier non trouvé.');
+    }
+
+    $path = Storage::disk('public')->path($rapport->fichier);
+
+    // Obtenir le type MIME en toute sécurité
+    $mimeType = mime_content_type($path); // Alternative sûre à Storage::mimeType()
+
+    return response()->file($path, [
+        'Content-Type' => $mimeType,
+    ]);
+}
 }
