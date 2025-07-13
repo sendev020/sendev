@@ -8,15 +8,14 @@ use App\Http\Controllers\RapportController;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\PersonnelController;
-use App\Models\Courrier;
 use App\Http\Controllers\SuiviPersonnelController;
+use App\Models\Courrier;
 
 /*
 |--------------------------------------------------------------------------
-| Routes publiques
+| Page d’accueil
 |--------------------------------------------------------------------------
 */
-
 Route::get('/', function () {
     $nbRecu = Courrier::where('type', 'recu')->count();
     $nbEnvoye = Courrier::where('type', 'envoye')->count();
@@ -25,10 +24,9 @@ Route::get('/', function () {
 
 /*
 |--------------------------------------------------------------------------
-| Dashboard (auth requis)
+| Tableau de bord
 |--------------------------------------------------------------------------
 */
-
 Route::get('/dashboard', function () {
     $nbRecu = Courrier::where('type', 'recu')->count();
     $nbEnvoye = Courrier::where('type', 'envoye')->count();
@@ -37,10 +35,9 @@ Route::get('/dashboard', function () {
 
 /*
 |--------------------------------------------------------------------------
-| Gestion du profil (auth requis)
+| Authentification & Profil
 |--------------------------------------------------------------------------
 */
-
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -49,10 +46,9 @@ Route::middleware('auth')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Courriers (auth requis)
+| Courriers
 |--------------------------------------------------------------------------
 */
-
 Route::middleware('auth')->group(function () {
     Route::resource('courriers', CourrierController::class);
     Route::get('courriers/export/pdf', [CourrierController::class, 'exportPDF'])->name('courriers.export.pdf');
@@ -61,31 +57,28 @@ Route::middleware('auth')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Rapports (auth requis)
+| Rapports
 |--------------------------------------------------------------------------
 */
-
 Route::middleware('auth')->group(function () {
     Route::resource('rapports', RapportController::class);
     Route::patch('rapports/{rapport}/archiver', [RapportController::class, 'archiver'])->name('rapports.archiver');
     Route::patch('rapports/{rapport}/restaurer', [RapportController::class, 'restaurer'])->name('rapports.restaurer');
-    //Route::get('rapports/{id}/download', [RapportController::class, 'download'])->name('rapports.download');
+    Route::get('rapports/{rapport}/download', [RapportController::class, 'download'])->name('rapports.download');
 });
 
 /*
 |--------------------------------------------------------------------------
-| Utilisateurs (liste simple, auth requis)
+| Utilisateurs (simple)
 |--------------------------------------------------------------------------
 */
-
 Route::middleware('auth')->get('/users', [UserController::class, 'index'])->name('users.index');
 
 /*
 |--------------------------------------------------------------------------
-| Routes Admin (role:admin requis)
+| Zone Admin (roles & permissions)
 |--------------------------------------------------------------------------
 */
-
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('roles', RoleController::class)->parameters(['roles' => 'role']);
     Route::resource('users', UserManagementController::class);
@@ -95,31 +88,21 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
 
 /*
 |--------------------------------------------------------------------------
-| Gestion du personnel (role:admin requis)
+| Personnels & Suivis
 |--------------------------------------------------------------------------
 */
-
-// Gestion du personnel (auth requis uniquement, pas besoin d'être admin)
-Route::middleware(['auth'])->group(function () {
-    Route::resource('personnels', PersonnelController::class);
-});
-
 Route::middleware('auth')->group(function () {
+    Route::resource('personnels', PersonnelController::class);
     Route::resource('suivis', SuiviPersonnelController::class);
+
+    Route::get('personnels/export/pdf', [PersonnelController::class, 'exportPdf'])->name('personnels.export.pdf');
+    Route::get('personnels/export/excel', [PersonnelController::class, 'exportExcel'])->name('personnels.export.excel');
+    Route::get('suivis/export/cumuls-pdf', [SuiviPersonnelController::class, 'exportCumulsPDF'])->name('suivis.export.cumuls');
 });
-
-Route::get('personnels/export/pdf', [App\Http\Controllers\PersonnelController::class, 'exportPdf'])->name('personnels.export.pdf');
-Route::get('personnels/export/excel', [App\Http\Controllers\PersonnelController::class, 'exportExcel'])->name('personnels.export.excel');
-
-
-Route::get('suivis/export/cumuls-pdf', [SuiviPersonnelController::class, 'exportCumulsPDF'])->name('suivis.export.cumuls');
-
-Route::get('/rapports/{rapport}/download', [RapportController::class, 'download'])->name('rapports.download');
 
 /*
 |--------------------------------------------------------------------------
-| Authentification
+| Authentification Laravel Breeze
 |--------------------------------------------------------------------------
 */
-
 require __DIR__.'/auth.php';
