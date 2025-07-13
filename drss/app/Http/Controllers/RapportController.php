@@ -66,6 +66,7 @@ class RapportController extends Controller
     // Téléchargement d’un fichier
      public function download(Rapport $rapport)
 {
+    dd($rapport);
     if (!$rapport->fichier || !Storage::disk('public')->exists($rapport->fichier)) {
         abort(404, 'Fichier non trouvé');
     }
