@@ -1,18 +1,2 @@
 *
 !.gitignore
-# Ignorer tous les fichiers du dossier sauf les fichiers .empty
-
-/storage/app/public/rapports/*
-!/storage/app/public/rapports/.empty
-
-/storage/app/public/photos/*
-!/storage/app/public/photos/.empty
-
-/storage/courriers/*
-!/storage/courriers/.empty
-
-/storage/logs/*
-!/storage/logs/.empty
-
-/bootstrap/cache/*
-!/bootstrap/cache/.empty
