@@ -33,7 +33,7 @@ class PersonnelController extends Controller
             'service' => 'required|string|max:255',
             'anniversaire' => 'required|date',
             'adresse' => 'required|string|max:255',
-            'photo' => 'nullable|image|max:2048',
+            'photo' => 'required|image|max:2048',
         ]);
 
         $data = $request->only([
@@ -42,8 +42,9 @@ class PersonnelController extends Controller
         ]);
 
         if ($request->hasFile('photo')) {
-            $data['photo'] = $request->file('photo')->store('photos', 'public'); // stocké dans storage/app/public/photos
-        }
+    $filename = time() . '_' . $request->file('photo')->getClientOriginalName();
+    $data['photo'] = $request->file('photo')->storeAs('photos', $filename, 'public');
+}
 
         Personnel::create($data);
 

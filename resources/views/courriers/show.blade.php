@@ -13,7 +13,7 @@
             <p><strong>Objet :</strong> {{ $courrier->objet }}</p>
             <p><strong>Référence :</strong> {{ $courrier->reference ?? '-' }}</p>
             @if ($courrier->fichier)
-                <p><strong>Fichier :</strong> <a href="{{ asset('storage/' . $courrier->fichier) }}" target="_blank">Télécharger</a></p>
+                <p><strong>Fichier :</strong> <a href="{{ route('courriers.download', $courrier) }}" target="_blank">Télécharger</a></p>
             @endif
 
             <a href="{{ route('courriers.edit', $courrier) }}" class="btn btn-warning">Modifier</a>

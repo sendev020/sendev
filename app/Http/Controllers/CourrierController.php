@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Exports\CourriersExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Storage;
 
 class CourrierController extends Controller
 {
@@ -99,6 +100,17 @@ public function exportPDF()
     $pdf = Pdf::loadView('courriers.pdf', compact('courriers'));
     return $pdf->download('courriers.pdf');
 }
+public function download(Courrier $courrier)
+    {
+        if (!$courrier->fichier || !Storage::disk('public')->exists($courrier->fichier)) {
+            abort(404, 'Fichier introuvable.');
+        }
 
+        $path = Storage::disk('public')->path($courrier->fichier);
+        $extension = pathinfo($path, PATHINFO_EXTENSION);
+        $nomFichier = $courrier->titre . '.' . $extension;
+
+        return response()->download($path, $nomFichier);
+    }
 }
 
