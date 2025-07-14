@@ -36,8 +36,8 @@
                         <td>{{ $rapport->titre }}</td>
                         <td>
                             @if($rapport->fichier)
-                                {{-- <a href="{{ asset('storage/' . $rapport->fichier) }}" target="_blank">Voir</a> --}}
-                                <a href="{{ route('rapports.view', $rapport) }}" target="_blank">Voir</a>
+                                <a href="{{ asset('storage/' . $rapport->fichier) }}" target="_blank">Voir</a>
+                                {{-- <a href="{{ route('rapports.view', $rapport) }}" target="_blank">Voir</a> --}}
 
                             @else
                                 <em>Pas de fichier</em>
