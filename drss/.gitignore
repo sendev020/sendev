@@ -22,3 +22,19 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+# Garder les dossiers vides avec un fichier .empty
+
+/storage/app/public/rapports/*
+!/storage/app/public/rapports/.empty
+
+/storage/app/public/photos/*
+!/storage/app/public/photos/.empty
+
+/storage/app/public/courriers/*
+!/storage/app/public/courriers/.empty
+
+/storage/logs/*
+!/storage/logs/.empty
+
+/bootstrap/cache/*
+!/bootstrap/cache/.empty
